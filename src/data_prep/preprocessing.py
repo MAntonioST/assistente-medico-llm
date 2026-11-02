@@ -54,8 +54,17 @@ class MedicalDataPreprocessor:
         return processed_dataset
 
 if __name__ == "__main__":
+    import os
+
     # Teste rápido do módulo
     preprocessor = MedicalDataPreprocessor()
     dataset_limpo = preprocessor.load_and_prepare_pubmedqa()
+
     print("\nExemplo de dado processado:")
     print(dataset_limpo[0])
+
+    # --- CÓDIGO NOVO PARA SALVAR O ARQUIVO ---
+    print("\nSalvando o dataset anonimizado...")
+    os.makedirs("data/processed", exist_ok=True)
+    dataset_limpo.to_csv("data/processed/pubmedqa_anonymized.csv")
+    print("Arquivo salvo com sucesso em: data/processed/pubmedqa_anonymized.csv")
