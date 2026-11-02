@@ -37,7 +37,7 @@ class MedicalDataPreprocessor:
         """
         logger.info("Baixando dataset PubMedQA...")
         # Usamos a versão 'pqa_labeled' que contém perguntas e respostas validadas
-        dataset = load_dataset("pubmed_qa", "pqa_labeled", split="train", trust_remote_code=True)
+        dataset = load_dataset("qiaojin/PubMedQA", "pqa_labeled", split="train", trust_remote_code=True)
 
         logger.info(f"Dataset carregado com {len(dataset)} registros. Iniciando anonimização...")
 
