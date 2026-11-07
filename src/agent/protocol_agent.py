@@ -14,6 +14,9 @@ class AgenteProtocolos:
             prompt = f"<|system|>\nYou are a medical assistant. Answer based ONLY on the context.</s>\n<|user|>\nContext: {contexto}\nQuestion: {pergunta}</s>\n<|assistant|>\n"
             resposta = self.llm.invoke(prompt)
         else:
-            resposta = f"CONTEXTO RECUPERADO:\n{contexto}\n\n(Sem LLM)"
+            # Formatação mais limpa para quando rodar localmente sem a LLM pesada
+            resposta = "Com base nas diretrizes clínicas recuperadas da base de dados:\n\n"
+            resposta += f"{contexto}\n\n"
+            resposta += "*(Nota do Sistema: Resposta extraída via RAG. LLM desativada no ambiente local)*"
 
         return {"resposta_temporaria": resposta}

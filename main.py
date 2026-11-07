@@ -1,24 +1,29 @@
 from src.agent.workflow import WorkflowAssistente
 
 def main():
-    print("Iniciando o Assistente Médico...\n")
-    assistente = WorkflowAssistente()
+    print("\n" + "="*60)
+    print("🏥 INICIANDO O ASSISTENTE MÉDICO (FIAP - Fase 3)")
+    print("="*60 + "\n")
 
-    # Teste 1: Rota de Protocolos
-    pergunta1 = "Qual o tratamento padrão para hipertensão?"
-    print(f"Usuário: {pergunta1}")
-    resultado1 = assistente.executar(pergunta1)
-    print(f"Rota escolhida: {resultado1.get('rota')}")
-    print(f"Resposta: {resultado1.get('resposta_final')}")
+    # Inicializa o workflow (passando llm=None para não travar a máquina local)
+    workflow = WorkflowAssistente(llm=None)
+    app = workflow.criar_grafo()
 
-    print("-" * 50)
+    # Novas perguntas baseadas no nosso banco JSON atualizado
+    perguntas_teste = [
+        "Qual o tratamento padrão para hipertensão?",
+        "O exame de sangue do paciente Robert Johnson chegou?"
+    ]
 
-    # Teste 2: Rota de Exames
-    pergunta2 = "O exame de sangue do paciente João chegou?"
-    print(f"\nUsuário: {pergunta2}")
-    resultado2 = assistente.executar(pergunta2)
-    print(f"Rota escolhida: {resultado2.get('rota')}")
-    print(f"Resposta: {resultado2.get('resposta_final')}")
+    for pergunta in perguntas_teste:
+        print(f"👤 USUÁRIO: {pergunta}")
+
+        # Executa o grafo
+        resultado = app.invoke({"pergunta": pergunta})
+
+        print(f"\n🤖 ASSISTENTE:")
+        print(f"{resultado['resposta_final']}\n")
+        print("-" * 60 + "\n")
 
 if __name__ == "__main__":
     main()
