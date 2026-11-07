@@ -2,17 +2,18 @@ from src.agent.state import EstadoAssistente
 from src.rag.retriever import RAGRetriever
 
 class AgenteProtocolos:
-    def __init__(self):
+    def __init__(self, llm=None):
         self.rag = RAGRetriever()
+        self.llm = llm
 
     def processar(self, state: EstadoAssistente) -> dict:
         pergunta = state["pergunta"]
-
-        # Busca a informação no banco de vetores (RAG)
         contexto = self.rag.buscar_contexto(pergunta)
 
-        # Por enquanto, retornamos o contexto bruto para provar que o RAG leu o arquivo.
-        # Na próxima etapa, o LLM vai ler isso e formular a resposta humana.
-        resposta = f"CONTEXTO RECUPERADO DOS PROTOCOLOS:\n{contexto}\n\n(Aguardando integração com LLM para resposta final)"
+        if self.llm:
+            prompt = f"<|system|>\nYou are a medical assistant. Answer based ONLY on the context.</s>\n<|user|>\nContext: {contexto}\nQuestion: {pergunta}</s>\n<|assistant|>\n"
+            resposta = self.llm.invoke(prompt)
+        else:
+            resposta = f"CONTEXTO RECUPERADO:\n{contexto}\n\n(Sem LLM)"
 
         return {"resposta_temporaria": resposta}
