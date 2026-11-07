@@ -7,27 +7,28 @@ from src.guardrails.security import GuardrailMedico
 class WorkflowAssistente:
     def __init__(self, llm=None):
         self.llm = llm
-        # Repassa o LLM para o agente de protocolos
         self.agente_protocolos = AgenteProtocolos(llm=self.llm)
         self.agente_exames = AgenteExames()
         self.guardrail = GuardrailMedico()
 
     def roteador(self, state: EstadoAssistente):
         pergunta = state["pergunta"].lower()
-        # Se a pergunta falar de exames ou resultados, vai para o agente de exames
+        print("   [Roteador] 🧭 Analisando a intenção da pergunta...")
+
         if "exame" in pergunta or "resultado" in pergunta:
+            print("   [Roteador] ➡️ Direcionando para o Agente de Exames.")
             return "agente_exames"
+
+        print("   [Roteador] ➡️ Direcionando para o Agente de Protocolos.")
         return "agente_protocolos"
 
     def criar_grafo(self):
         workflow = StateGraph(EstadoAssistente)
 
-        # Adicionando os nós
         workflow.add_node("agente_protocolos", self.agente_protocolos.processar)
         workflow.add_node("agente_exames", self.agente_exames.processar)
         workflow.add_node("guardrail", self.guardrail.verificar)
 
-        # Definindo o fluxo condicional (Roteador)
         workflow.set_conditional_entry_point(
             self.roteador,
             {
@@ -36,7 +37,6 @@ class WorkflowAssistente:
             }
         )
 
-        # Conectando os agentes ao Guardrail (saída obrigatória)
         workflow.add_edge("agente_protocolos", "guardrail")
         workflow.add_edge("agente_exames", "guardrail")
         workflow.add_edge("guardrail", END)

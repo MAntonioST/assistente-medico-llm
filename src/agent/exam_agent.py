@@ -7,6 +7,7 @@ class AgenteExames:
         self.caminho_exames = "data/raw/exames.json"
 
     def processar(self, state: EstadoAssistente) -> dict:
+        print("   [Agente de Exames] 🔬 Consultando banco de dados laboratorial...")
         pergunta = state["pergunta"]
 
         if not os.path.exists(self.caminho_exames):
