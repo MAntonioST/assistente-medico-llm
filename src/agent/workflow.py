@@ -13,13 +13,13 @@ class WorkflowAssistente:
 
     def roteador(self, state: EstadoAssistente):
         pergunta = state["pergunta"].lower()
-        print("   [Roteador] 🧭 Analisando a intenção da pergunta...")
+        print("   👨‍⚕️ Dr. Roteador (Triagem): Deixa comigo! Analisando o pedido do paciente...")
 
         if "exame" in pergunta or "resultado" in pergunta:
-            print("   [Roteador] ➡️ Direcionando para o Agente de Exames.")
+            print("   👨‍⚕️ Dr. Roteador (Triagem): Isso é com o laboratório. Dra. Exames, pode verificar os laudos, por favor?")
             return "agente_exames"
 
-        print("   [Roteador] ➡️ Direcionando para o Agente de Protocolos.")
+        print("   👨‍⚕️ Dr. Roteador (Triagem): Precisamos das diretrizes clínicas. Dr. Protocolos, qual é a recomendação para este caso?")
         return "agente_protocolos"
 
     def criar_grafo(self):
