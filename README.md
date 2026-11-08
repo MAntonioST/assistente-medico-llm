@@ -1,77 +1,56 @@
-# Assistente Médico Virtual com IA (Tech Challenge - Fase 3)
+# Assistente Médico LLM - Tech Challenge Fase 3
 
-**Aviso Legal:** Este projeto tem fins estritamente acadêmicos e foi desenvolvido para o Tech Challenge da FIAP. O assistente não deve ser utilizado para diagnósticos reais ou prescrição de tratamentos sem a supervisão e validação de um profissional de saúde qualificado.
+Este projeto implementa um assistente virtual médico baseado em Inteligência Artificial, desenvolvido para o Tech Challenge da Fase 3 da pós-graduação da FIAP. O sistema utiliza uma LLM fine-tunada, LangChain e LangGraph para orquestrar múltiplos agentes especializados.
 
-Este repositório contém a solução desenvolvida para a Fase 3 do Tech Challenge da pós-graduação em Inteligência Artificial para Devs da FIAP.
+## 🏗️ Arquitetura do Sistema (LangGraph)
 
-O projeto consiste em um **Assistente Virtual Médico** projetado para auxiliar profissionais de saúde em condutas clínicas, responder dúvidas e sugerir procedimentos com base em protocolos internos, utilizando fluxos de decisão automatizados e seguros.
-
-## 🎯 Objetivos e Requisitos Atendidos
-
-* **Fine-Tuning de LLM:** Ajuste fino do modelo open-source Zephyr-7b utilizando QLoRA com dados médicos.
-* **Orquestração com LangGraph:** Pipeline inteligente com múltiplos agentes para consultas em bases de dados estruturadas (JSON) e dados não estruturados via RAG (ChromaDB).
-* **Segurança e Validação (Guardrails):** Implementação de limites rigorosos de atuação, garantindo que o assistente não prescreva tratamentos diretamente.
-
-## 🧠 Arquitetura do Sistema
-
-O fluxo de decisão foi construído utilizando LangGraph, separando as responsabilidades entre agentes especializados:
+O fluxo de decisão automatizado é coordenado pelo LangGraph, roteando a requisição do usuário para o agente mais adequado:
 
 ```mermaid
-graph TD
-    User[Usuário] --> Router[Roteador de Triagem]
-    Router -- "Exames/Laudos" --> AgentExames[Agente de Exames]
-    Router -- "Protocolos/Histórico" --> AgentProt[Agente de Protocolos]
-    AgentExames --> JSON[(Dados Clínicos JSON)]
-    AgentProt --> RAG[(ChromaDB RAG)]
-    AgentProt --> LLM((Zephyr-7b QLoRA))
-    AgentExames --> Guardrail[Guardrail Médico]
-    AgentProt --> Guardrail
-    Guardrail --> Output[Resposta Segura]
-```
+flowchart TD
+    User["Usuário (Médico)"] --> Router["LangGraph: Roteador de Triagem"]
 
-## 📂 Estrutura de Diretórios
+    Router -->|Exames/Laudos| AgentExames["Agente de Exames"]
+    Router -->|Protocolos/Diretrizes| AgentProt["Agente de Protocolos"]
+    Router -->|Status do Paciente| AgentPendencias["Agente de Pendências"]
+    Router -->|Emergências| AgentAlertas["Agente de Alertas"]
 
-```text
-assistente-medico-llm/
-├── data/
-│   ├── raw/             # Protocolos em TXT e Exames em JSON
-│   └── vector_db/       # Banco de dados vetorial (ChromaDB)
-├── src/
-│   ├── agent/           # Lógica do LangGraph (Roteador, Agentes, Estado)
-│   ├── guardrails/      # Filtros de segurança e validação
-│   └── rag/             # Configuração do Retriever e Embeddings
-├── main.py              # Ponto de entrada da aplicação (Terminal)
-└── requirements.txt     # Dependências do projeto
+    AgentExames <-->|Busca Prontuários| JSON["Base de Dados JSON"]
+    AgentPendencias <-->|Consulta Status| JSON
+    AgentProt <-->|Busca Contexto| RAG["ChromaDB RAG"]
+
+    AgentExames <-->|Inferência| LLM["Zephyr-7b QLoRA (Fine-Tuned)"]
+    AgentProt <-->|Inferência| LLM
+
+    AgentExames -->|Validação| Guardrail["Medical Guardrail"]
+    AgentProt -->|Validação| Guardrail
+    AgentPendencias -->|Validação| Guardrail
+    AgentAlertas -->|Validação| Guardrail
+
+    Guardrail --> Output["Resposta Segura com Fontes"]
+
+    Audit["Logging Detalhado (.log)"] -.->|Rastreia| Router
+    Audit -.->|Rastreia| AgentExames
+    Audit -.->|Rastreia| AgentProt
+    Audit -.->|Rastreia| AgentPendencias
+    Audit -.->|Rastreia| AgentAlertas
+    Audit -.->|Rastreia| Guardrail
 ```
 
 ## 🚀 Como Executar Localmente
 
-O projeto foi desenhado para rodar localmente, sem necessidade de chaves de API externas para a inferência principal.
+1. Crie e ative um ambiente virtual:
+   `python3 -m venv venv`
+   `source venv/bin/activate`
 
-**1. Clone o repositório:**
-```bash
-git clone https://github.com/MAntonioST/assistente-medico-llm.git
-cd assistente-medico-llm
-```
+2. Instale as dependências:
+   `pip install -r requirements.txt`
 
-**2. Crie e ative o ambiente virtual:**
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
+3. Execute o sistema interativo no terminal:
+   `python3 main.py`
 
-**3. Instale as dependências:**
-```bash
-pip install -r requirements.txt
-```
-
-**4. Execute o assistente:**
-```bash
-python3 main.py
-```
-
-## 👨‍💻 Autor
-* **Marco Antonio Teixeira** - FIAP (Pós-Graduação em IA para Devs)
-
-## 📄 Licença
-Este projeto está sob a licença MIT.
+## 🧪 Exemplos de Uso
+- **Protocolos:** "Qual o tratamento padrão para hipertensão?"
+- **Exames:** "Resultado do exame do Robert Johnson"
+- **Pendências:** "Exames pendentes do Robert Johnson"
+- **Alertas:** "Emitir alerta de emergência"
