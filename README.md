@@ -13,10 +13,6 @@ Este projeto implementa um assistente virtual médico baseado em Inteligência A
 
 ⚠️ **Nota importante:** este sistema é uma ferramenta preditiva de apoio à decisão médica. O diagnóstico final e a prescrição de tratamentos sempre devem ser confirmados por um profissional de saúde qualificado.
 
-## 🎥 Apresentação em Vídeo
-O vídeo de demonstração do projeto, contemplando o treinamento da LLM, execução do fluxo automatizado (LangGraph) e testes dos agentes, pode ser acessado no link abaixo:
-* [🔗 Assistir ao Vídeo de Demonstração no YouTube](COLOQUE_SEU_LINK_AQUI)
-
 ## 🏗️ Arquitetura da Solução
 O projeto segue princípios de modularidade, separando as responsabilidades em módulos específicos dentro da pasta `src/`. O fluxo de decisão automatizado é coordenado pelo LangGraph:
 
