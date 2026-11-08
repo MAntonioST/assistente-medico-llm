@@ -1,3 +1,4 @@
+
 # 🩺 Tech Challenge - Assistente Médico Virtual com IA
 Fase 3 - IA Foundations
 FIAP - Pós-Graduação em IA para DEVs
