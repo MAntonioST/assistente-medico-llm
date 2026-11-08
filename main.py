@@ -1,25 +1,34 @@
-from src.agent.workflow import WorkflowAssistente
+import logging
+import sys
+from src.agent.workflow import AssistenteMedicoApp
+from src.agent.exam_agent import AgenteExames
+from src.agent.protocol_agent import AgenteProtocolos
+from src.agent.pending_agent import PendingExamsAgent
+from src.agent.alert_agent import AlertAgent
+from src.guardrails.medical_guardrail import GuardrailMedico
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', handlers=[logging.StreamHandler(sys.stdout)])
 
 def main():
-    print("\n" + "="*60)
-    print("🏥 INICIANDO O ASSISTENTE MÉDICO (FIAP - Fase 3)")
-    print("="*60 + "\n")
+    print("Inicializando o Assistente Médico Multiagentes...")
 
-    workflow = WorkflowAssistente(llm=None)
-    app = workflow.criar_grafo()
+    agente_exames = AgenteExames()
+    agente_protocolos = AgenteProtocolos(llm=None)
+    agente_pendencias = PendingExamsAgent()
+    agente_alertas = AlertAgent()
+    guardrail = GuardrailMedico()
 
-    # Adicionamos uma pergunta sobre o histórico do paciente!
-    perguntas_teste = [
-        "Qual o tratamento padrão para hipertensão?",
-        "O exame de sangue do paciente Robert Johnson chegou?",
-        "Qual o histórico clínico do paciente Robert Johnson?"
-    ]
+    app = AssistenteMedicoApp(agente_exames, agente_protocolos, agente_pendencias, agente_alertas, guardrail)
 
-    for pergunta in perguntas_teste:
-        print(f"👤 USUÁRIO: {pergunta}")
-        resultado = app.invoke({"pergunta": pergunta})
-        print(f"\n🤖 ASSISTENTE:\n{resultado['resposta_final']}\n")
-        print("-" * 60 + "\n")
+    print("\n✅ Sistema pronto! Digite sua pergunta (ou 'sair' para encerrar).")
+    print("Experimente: 'exames pendentes do robert johnson' ou 'emitir alerta de emergência'.")
+
+    while True:
+        pergunta = input("\n👨‍⚕️ Usuário: ")
+        if pergunta.lower() in ['sair', 'exit', 'quit', 'q']:
+            break
+        resposta = app.processar(pergunta)
+        print(f"🤖 Assistente: {resposta}")
 
 if __name__ == "__main__":
     main()
