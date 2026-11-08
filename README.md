@@ -1,16 +1,24 @@
-# Assistente Médico Virtual com IA (Tech Challenge - Fase 3)
+# 🩺 Tech Challenge - Assistente Médico Virtual com IA
+Fase 3 - IA Foundations
+FIAP - Pós-Graduação em IA para DEVs
+Autor: Marco Antonio Teixeira
 
-Este projeto é a entrega final da Fase 3 da pós-graduação em IA para Devs da FIAP. Trata-se de um assistente virtual médico baseado em Inteligência Artificial, capaz de auxiliar nas condutas clínicas, responder dúvidas e sugerir procedimentos com base em protocolos internos.
+## 📝 Descrição
+Este projeto implementa um assistente virtual médico baseado em Inteligência Artificial para apoiar condutas clínicas e responder dúvidas médicas com base em protocolos internos. A solução foi desenvolvida utilizando técnicas avançadas de IA Generativa:
 
-## 🎯 Objetivos e Requisitos Atendidos
-* **Fine-Tuning de LLM:** Modelo `Zephyr-7b-beta` treinado com QLoRA utilizando dados médicos, protocolos e laudos sintéticos.
-* **Orquestração com LangGraph (Multi-Agent):** Pipeline inteligente com múltiplos agentes especializados para consultas em bases estruturadas (JSON) e não estruturadas via RAG (ChromaDB).
-* **Segurança e Validação (Guardrails):** Implementação de limites rigorosos de atuação, garantindo que o assistente não prescreva tratamentos diretamente e sempre exiba avisos de segurança.
-* **Explicabilidade (Explainability):** O sistema retorna as fontes utilizadas (IDs de exames, trechos de documentos), garantindo auditoria clínica.
+- **Fine-Tuning:** Treinamento do modelo `Zephyr-7b-beta` com QLoRA utilizando dados médicos, protocolos e laudos sintéticos.
+- **Multi-Agent System:** Orquestração de múltiplos agentes especializados utilizando **LangChain** e **LangGraph**.
+- **RAG (Retrieval-Augmented Generation):** Consultas a bases de dados estruturadas (JSON) e não estruturadas (ChromaDB) para contextualizar as respostas.
+- **Segurança (Guardrails):** Implementação de travas de segurança rigorosas para evitar prescrições diretas e garantir a explicabilidade (fontes) das respostas.
 
-## 🏗️ Arquitetura do Sistema
+⚠️ **Nota importante:** este sistema é uma ferramenta preditiva de apoio à decisão médica. O diagnóstico final e a prescrição de tratamentos sempre devem ser confirmados por um profissional de saúde qualificado.
 
-O fluxo de decisão foi construído utilizando LangGraph, separando as responsabilidades entre 4 agentes especializados:
+## 🎥 Apresentação em Vídeo
+O vídeo de demonstração do projeto, contemplando o treinamento da LLM, execução do fluxo automatizado (LangGraph) e testes dos agentes, pode ser acessado no link abaixo:
+* [🔗 Assistir ao Vídeo de Demonstração no YouTube](COLOQUE_SEU_LINK_AQUI)
+
+## 🏗️ Arquitetura da Solução
+O projeto segue princípios de modularidade, separando as responsabilidades em módulos específicos dentro da pasta `src/`. O fluxo de decisão automatizado é coordenado pelo LangGraph:
 
 ```mermaid
 flowchart TD
@@ -43,54 +51,59 @@ flowchart TD
     Audit -.->|Rastreia| Guardrail
 ```
 
-## 📁 Estrutura de Diretórios
+## 🚀 Como executar
+### 1. Clone o repositório e configure o ambiente
+```bash
+git clone https://github.com/MAntonioST/assistente-medico-llm.git
+cd assistente-medico-llm
 
-```text
-assistente-medico-llm/
-├── data/
-│   ├── raw/                 # Protocolos em TXT e Exames em JSON
-│   └── vector_db/           # Banco de dados vetorial (ChromaDB)
-├── src/
-│   ├── agent/               # Agentes (Exames, Protocolos, Pendências, Alertas) e Workflow (LangGraph)
-│   ├── data_prep/           # Scripts de preparação de dados
-│   ├── fine_tuning/         # Scripts de treinamento (QLoRA)
-│   ├── guardrails/          # Travas de segurança (Medical Guardrail)
-│   ├── rag/                 # Configuração do ChromaDB e Retriever
-│   └── utils/               # Utilitários e logs nativos
-├── main.py                  # Ponto de entrada do sistema interativo local
-├── requirements.txt         # Dependências do projeto
-└── Apresentacao_Maxima.ipynb # Notebook final para demonstração no Colab
+# Crie e ative o ambiente virtual
+python3 -m venv venv
+source venv/bin/activate  # Linux/macOS
+venv\Scripts\activate     # Windows
+
+# Instale as dependências
+pip install -r requirements.txt
 ```
 
-## 🚀 Como Executar Localmente
-
-1. **Clone o repositório e entre na pasta:**
-   ```bash
-   git clone https://github.com/MAntonioST/assistente-medico-llm.git
-   cd assistente-medico-llm
-   ```
-
-2. **Crie e ative um ambiente virtual:**
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
-
-3. **Instale as dependências:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Execute o sistema interativo no terminal:**
-   ```bash
-   python3 main.py
-   ```
-
-## 🧪 Exemplos de Uso no Terminal
+### 2. Execute o pipeline local interativo
+```bash
+python3 main.py
+```
+*Exemplos de perguntas para testar o roteamento:*
 - **Protocolos:** "Qual o tratamento padrão para hipertensão?"
 - **Exames:** "Resultado do exame do Robert Johnson"
 - **Pendências:** "Exames pendentes do Robert Johnson"
 - **Alertas:** "Emitir alerta de emergência"
 
-## ☁️ Execução na Nuvem (Google Colab)
+### 3. Execução na Nuvem (Google Colab)
 Para testar o modelo com a LLM real (Fine-Tuned) utilizando aceleração de GPU, faça o upload do arquivo `Apresentacao_Maxima.ipynb` no Google Colab e execute as células sequencialmente.
+
+## 📂 Estrutura do Projeto
+```text
+assistente-medico-llm/
+├── main.py                 # Orquestrador principal interativo
+├── requirements.txt        # Dependências do projeto
+├── .gitignore              # Arquivos ignorados pelo Git
+├── data/
+│   ├── raw/                # Protocolos em TXT e Exames em JSON
+│   └── vector_db/          # Banco de dados vetorial (ChromaDB)
+├── src/                    # Módulos do sistema
+│   ├── agent/              # Agentes (Exames, Protocolos, Pendências, Alertas) e Workflow (LangGraph)
+│   ├── data_prep/          # Scripts de preparação de dados
+│   ├── fine_tuning/        # Scripts de treinamento (QLoRA)
+│   ├── guardrails/         # Travas de segurança (Medical Guardrail)
+│   ├── rag/                # Configuração do ChromaDB e Retriever
+│   └── utils/              # Utilitários e logs nativos
+└── Apresentacao_Maxima.ipynb # Notebook final para demonstração no Colab
+```
+
+## 🛠️ Tecnologias Utilizadas
+- **Linguagem:** Python 3.12+
+- **LLM & Fine-Tuning:** HuggingFace, PEFT, QLoRA, `Zephyr-7b-beta`
+- **Orquestração de Agentes:** LangChain, LangGraph
+- **RAG & Vector DB:** ChromaDB, Sentence-Transformers (`all-MiniLM-L6-v2`)
+- **Ambiente de Treinamento:** Google Colab (GPU T4)
+
+## 📄 Licença
+Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
